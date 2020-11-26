@@ -9,7 +9,7 @@ const fetchScores = () => {
 };
 
 const postScore = (score) => {
-  fetch(
+  return fetch(
     `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${gameId}/scores`,
     {
       method: "POST",
@@ -56,7 +56,7 @@ async function processForm () {
 
   let newInput = { user: user.value, score: score.value };
   
-  postScore(newInput);
+  await postScore(newInput);
   refreshScores();
 };
 
