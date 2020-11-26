@@ -2,31 +2,14 @@ let game = { "name": "Jueguito" };
 
 const gameId = "UcKKRKvukMYoZMUP4puG"; 
 
-// fetch("https://us-central1-js-capstone-backend.cloudfunctions.net/api/games", {
-//   method: "POST",
-//   headers: {
-//     "content-type": "application/json"
-//   },
-//   body: JSON.stringify(game)
-// })
-// .then(response => response.json())
-// .then(data => console.log(data))
-
-const gameResults = () => {
+const fetchScores = () => {
   return fetch(
     `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${gameId}/scores`
   )
     .then((response) => response.json())
 }
 
-gameResults().then(data => console.log(data));
-
-let testScore = {
-  user: "John Doe",
-  score: 42,
-};
-
-const updateResults = () => {
+const postScore = score => {
   fetch(
     `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${gameId}/scores`,
     {
@@ -34,10 +17,36 @@ const updateResults = () => {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(testScore),
+      body: JSON.stringify(score),
     }
-  ).then((response) => response.json())
-  .then(data => console.log(data))
+  )
 };
 
-updateResults();
+async function displayScores() {
+  let scores = await fetchScores()
+  let scoresArray = scores.result.sort((a, b) => {
+    return b.score - a.score
+  });
+
+  let list = document.getElementById('scores-list');
+
+  scoresArray.forEach( score => {
+    let listItem = document.createElement('li');
+    listItem.textContent = `${score.user}: ${score.score}`
+    list.appendChild(listItem);
+  });
+};
+
+function refreshScores() {
+  let list = document.getElementById('scores-list');
+  list.innerHTML = '';
+  displayScores();
+}
+
+const refreshButton = document.getElementById('refresh-scores-button');
+
+refreshButton.addEventListener('click', function() {
+  refreshScores()
+});
+
+displayScores();
